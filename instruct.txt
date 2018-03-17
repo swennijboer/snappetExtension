@@ -1,0 +1,22 @@
+Groep 8 -> zoeken leerdoer -> 524 && 247
+
+
+OUTPUT
+---------------------------------------------
+							%Leerdoel%
+%Kind_naam%		%Vaardigheid%
+%Kind_naam%		%Vaardigheid%
+%Kind_naam%		%Vaardigheid%
+%Kind_naam%		%Vaardigheid%
+%Kind_naam%		%Vaardigheid%
+%Kind_naam%		%Vaardigheid%
+%Kind_naam%		%Vaardigheid%
+%Kind_naam%		%Vaardigheid%
+%Kind_naam%		%Vaardigheid%
+%Kind_naam%		%Vaardigheid%
+%Kind_naam%		%Vaardigheid%
+%Kind_naam%		%Vaardigheid%
+---------------------------------------------
+
+WHERE
+%Leerdoel% -> Gecentreerd op pagina
