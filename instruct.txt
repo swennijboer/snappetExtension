@@ -18,5 +18,4 @@ OUTPUT
 %Kind_naam%		%Vaardigheid%
 ---------------------------------------------
 
-WHERE
-%Leerdoel% -> Gecentreerd op pagina
+%leerdoel% centreren op pagina
