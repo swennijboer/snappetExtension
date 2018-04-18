@@ -1,6 +1,6 @@
 {
-  "name": "Hello Extensions",
-  "description" : "Base Level Extension",
+  "name": "SnappetReader",
+  "description" : "Reads snappet student information and generates a report from that",
   "version": "1.0",
   "browser_action": {
     "default_popup": "hello.html",
@@ -15,5 +15,9 @@
       },
       "description": "Opens hello.html"
     }
-  }
+  },
+  "permissions": [
+    "tabs",
+    "<all_urls>"
+  ]
 }
