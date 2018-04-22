@@ -24,25 +24,30 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
         var source = request.source;
 
         // Lets get to the interesting part, after var option the javascript with the student data is saved
+        // first we want to inspect the pupils part
         var data = source.split('var options');
+        data = data[1].split('pupils');
         var segment = data[1].split("");        // Make an character array from the string
 
         // Within segment we will search for pupils, once pupils is found, take everything behind it between { and } (is correct JSON)
         var i = 0;                              // We define this early because we also want to use it in the second loop
         var save = false;                       // If true we save the part that we see to a variable, otherwise we don't
-        var pupils = "";                        // We save the pupil data to this variable (will later be converted to the respective object)
-        for(; i < segment.length && save; i++){
-            alert(segment[i]);
-            if (segment[i] == '{') {save = true; alert("hio");}
+        var doorgaan = true;                    // We stop the loop when this turns to false -> so when we have reached the end of the student name part
+        var pupils = "";                        // We save the pupil data to this variable (will later be converted to the respective JSON object)
+
+        for(; i < segment.length && doorgaan; i++){
+            if (segment[i] == '{') {save = true;}
 
             if (save) {pupils += segment[i];}
 
-            if (segment[i] == "}") {save = false;}
+            if (segment[i] == "}") {save = false; doorgaan = false;}
         }
         uitvoer = pupils;
 
         // Continue where the last reader stopped, and search for progressPerPupil, here { } is used within so keep a counter of number of opened and closed ones
-
+        save = false;
+        doorgaan = true;
+        var progress = "";
 
         // Can be removed later, we will generate a PDF and open it in a new tab. For now easy for debugging
         message.innerText = uitvoer;
