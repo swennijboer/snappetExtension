@@ -35,19 +35,31 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
         var doorgaan = true;                    // We stop the loop when this turns to false -> so when we have reached the end of the student name part
         var pupils = "";                        // We save the pupil data to this variable (will later be converted to the respective JSON object)
 
-        for(; i < segment.length && doorgaan; i++){
+        for(; i < segment.length && doorgaan; i++) {
             if (segment[i] == '{') {save = true;}
 
             if (save) {pupils += segment[i];}
 
             if (segment[i] == "}") {save = false; doorgaan = false;}
         }
-        uitvoer = pupils;
 
         // Continue where the last reader stopped, and search for progressPerPupil, here { } is used within so keep a counter of number of opened and closed ones
+        data = data[1].split("progressPerPupil");   // Get to the part where student progress is saved
+        segment = data[1].split("");                // Character array again
+        i = 0;
         save = false;
-        doorgaan = true;
+        var open = 0;
         var progress = "";
+
+        for(; i < segment.length && doorgaan; i++) {
+            if (segment[i] == '{') {save = true;}
+
+            if (save) {pupils += segment[i];}
+
+            if (segment[i] == "}") {save = false; doorgaan = false;}
+        }
+
+
 
         // Can be removed later, we will generate a PDF and open it in a new tab. For now easy for debugging
         message.innerText = uitvoer;
