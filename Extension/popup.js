@@ -67,7 +67,16 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
             if (segment[i] == "}") {open--;}
         }
 
-        uitvoer = progress;
+
+
+        // We have now got the pupil info and the progress for each pupil, so now we can generate the PDF
+
+        pupils = JSON.parse(pupils);
+        progress = JSON.parse(progress);
+        alert("hoi");
+
+
+
 
 
 
