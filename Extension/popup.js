@@ -86,14 +86,16 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
             docdata.push([naam, ability, questions]);
         }
 
+        docdata.sort();                                             // Make sure that the array is sorted by name
 
-        var swen = pupils[841703];
-        var swennert = 5;
-
-
-
-
-
+        // Start generating the PDF
+        var columns = ["Naam", "Score", "Aantal opgaven"];
+        var doc = new jsPDF('p', 'pt');
+        doc.text(50, 50, "WHAAAAAAAAAAA");
+        //doc.autoTable(columns, docdata);
+        //chrome.tabs.create({});
+        doc.output('dataurlnewwindow');
+        doc.save('data.pdf');
 
         // Can be removed later, we will generate a PDF and open it in a new tab. For now easy for debugging
         message.innerText = "Done";
