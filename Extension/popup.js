@@ -18,10 +18,10 @@ function onWindowLoad() {
 // Event listener, when we send a message we want this function to receive it and handle it
 chrome.runtime.onMessage.addListener(function(request, sender) {
     if (request.action == "getSource") {
-        var uitvoer = "Done";    //Can be removed later
-
         // We now have the full source of the page
         var source = request.source;
+
+        // TODO: Check if the data is snappet or a wrong page, might have to be done slightly later than this, but you get the idea
 
         // Lets get to the interesting part, after var option the javascript with the student data is saved
         // first we want to inspect the pupils part
@@ -69,11 +69,26 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
 
 
 
-        // We have now got the pupil info and the progress for each pupil, so now we can generate the PDF
-
+        // We have now got the pupil info and the progress for each pupil, we first make an array with the correct data
         pupils = JSON.parse(pupils);
         progress = JSON.parse(progress);
-        alert("hoi");
+
+        var keys = Object.keys(pupils);                             // All keys of the students, so we can access them like an array
+        var docdata = [];                                           // Preparing array for document data
+        for(var c = 0; c < keys.length; c++) {
+            var pupil = pupils[keys[c]];                            // Select the current student
+            var score = progress[keys[c]];                          // Select the score info for the current student
+
+            var naam = pupil[2] + ', ' + pupil[0];                  // Make the student name -> lastName, firstName
+            var ability = score['abilityPercent'];                  // Ability percentage of the student
+            var questions = score['answersCount'];                  // Amount of answered questions
+
+            docdata.push([naam, ability, questions]);
+        }
+
+
+        var swen = pupils[841703];
+        var swennert = 5;
 
 
 
@@ -81,7 +96,7 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
 
 
         // Can be removed later, we will generate a PDF and open it in a new tab. For now easy for debugging
-        message.innerText = uitvoer;
+        message.innerText = "Done";
     }
 });
 
