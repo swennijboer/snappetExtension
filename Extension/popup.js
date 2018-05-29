@@ -91,10 +91,10 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
         // Start generating the PDF
         var columns = ["Naam", "Score", "Aantal opgaven"];
         var doc = new jsPDF('p', 'pt');
-        doc.text(50, 50, "WHAAAAAAAAAAA");
-        //doc.autoTable(columns, docdata);
+        //doc.text(50, 50, "WHAAAAAAAAAAA");
+        doc.autoTable(columns, docdata);
         //chrome.tabs.create({});
-        doc.output('dataurlnewwindow');
+        //doc.output('dataurlnewwindow');
         doc.save('data.pdf');
 
         // Can be removed later, we will generate a PDF and open it in a new tab. For now easy for debugging

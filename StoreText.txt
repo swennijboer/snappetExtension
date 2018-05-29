@@ -1,0 +1,2 @@
+Plugin speciaal voor gebruiks van het leerkrachtenplatform Snappet. Bij het lesoverzicht kan een snel overzicht van de leerlingen met hun bijbehorende score gegeneerd worden.
+Hiervoor moet je op de pagina van een les zitten en dan vervolgens op het Snappet icoon klikken.
