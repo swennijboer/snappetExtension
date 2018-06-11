@@ -95,15 +95,14 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
         docdata.sort();                                             // Make sure that the array is sorted by name
 
         // Start generating the PDF
-        var columns = ["Naam", "Score", "Aantal opgaven"];
+        var columns = ["Naam", "Score (%)", "Aantal opgaven"];
         var doc = new jsPDF('p', 'pt');
-        //doc.text(50, 50, "WHAAAAAAAAAAA");
-        //doc.text(50, 50, title);
+        var splitTitle = doc.splitTextToSize(title, 530);
+        starty = 65 + splitTitle.length * 13;
         doc.autoTable(columns, docdata,
             {
-                startY: 80,
+                startY: starty,
                 addPageContent: function (data) {
-                    var splitTitle = title;//doc.splitTextToSize(title, 480);
                     doc.text(splitTitle, 40,60);
                 }
             });
