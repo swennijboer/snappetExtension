@@ -23,6 +23,12 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
 
         // TODO: Check if the data is snappet or a wrong page, might have to be done slightly later than this, but you get the idea
 
+        // First we get the name of the page
+        var sourceCopy = source;
+        var title = sourceCopy.split("<div class=\"heading\"")[1];
+        title = title.split("title=\"")[1];
+        title = title.split("\"")[0];
+
         // Lets get to the interesting part, after var option the javascript with the student data is saved
         // first we want to inspect the pupils part
         var data = source.split('var options');
@@ -92,7 +98,15 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
         var columns = ["Naam", "Score", "Aantal opgaven"];
         var doc = new jsPDF('p', 'pt');
         //doc.text(50, 50, "WHAAAAAAAAAAA");
-        doc.autoTable(columns, docdata);
+        //doc.text(50, 50, title);
+        doc.autoTable(columns, docdata,
+            {
+                startY: 80,
+                addPageContent: function (data) {
+                    var splitTitle = title;//doc.splitTextToSize(title, 480);
+                    doc.text(splitTitle, 40,60);
+                }
+            });
         //chrome.tabs.create({});
         //doc.output('dataurlnewwindow');
         doc.save('data.pdf');
