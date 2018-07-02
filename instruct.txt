@@ -19,3 +19,24 @@ OUTPUT
 ---------------------------------------------
 
 %leerdoel% centreren op pagina
+
+Kleuren:
+.ability-target-container .ability-target-bar.rating-superb .actual-growth {
+    background-color: #6d8e13
+}
+
+.ability-target-container .ability-target-bar.rating-good .actual-growth {
+    background-color: #9dcd1c
+}
+
+.ability-target-container .ability-target-bar.rating-average .actual-growth {
+    background-color: #f6cf19
+}
+
+.ability-target-container .ability-target-bar.rating-modest .actual-growth {
+    background-color: #e95f15
+}
+
+.ability-target-container .ability-target-bar.rating-bad .actual-growth {
+    background-color: #c71717
+}
