@@ -108,27 +108,27 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
                 createdCell: function (cell, opts) {
                     var ability = docdata[opts.row.index][1];
 
-                    if(ability >= 0 && ability < 21) {
+                    if(ability >= 0 && ability < 21 && opts.column.index == 1) {
                         //cell.styles.fillColor = "#c71717";
                         cell.styles.fillColor = [199, 23, 23];
                     }
 
-                    if(ability >= 20 && ability < 41) {
+                    if(ability >= 20 && ability < 41 && opts.column.index == 1) {
                         // cell.styles.fillColor = "#e95f15";
                         cell.styles.fillColor = [233, 95, 21];
                     }
 
-                    if(ability >= 40 && ability < 61) {
+                    if(ability >= 40 && ability < 61 && opts.column.index == 1) {
                         // cell.styles.fillColor = "#f6cf19";
                         cell.styles.fillColor = [246, 207, 25];
                     }
 
-                    if(ability >= 60 && ability < 81) {
+                    if(ability >= 60 && ability < 81 && opts.column.index == 1) {
                         // cell.styles.fillColor = "#9dcd1c";
                         cell.styles.fillColor = [157, 205, 28];
                     }
 
-                    if(ability >= 80 && ability < 101) {
+                    if(ability >= 80 && ability < 101 && opts.column.index == 1) {
                         // cell.styles.fillColor = "#6d8e13";
                         cell.styles.fillColor = [109, 142, 19];
                     }
