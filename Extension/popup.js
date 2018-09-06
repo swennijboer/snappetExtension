@@ -35,7 +35,7 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
         data = data[1].split('pupils');
         var segment = data[1].split("");        // Make an character array from the string
 
-        // Within segment we will search for pupils, once pupils is found, take everything behind it between { and } (is correct JSON)
+        // Get the pupil data
         var save = false;                       // If true we save the part that we see to a variable, otherwise we don't
         var doorgaan = true;                    // We stop the loop when this turns to false -> so when we have reached the end of the student name part
         var pupils = "";                        // We save the pupil data to this variable (will later be converted to the respective JSON object)
@@ -49,17 +49,32 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
         }
 
 
-
-
-        // Search for progressPerPupil, here { } is used within so keep a counter of number of opened and closed ones
-
+        // Get the lesson data
         var lessonData = data[2];                       // We save the part in which the lesson data is saved, we will need this later
         lessonData = lessonData.split("lessons")[1];
+        // The lessons are saved as [{lesson1}, {lesson2}, {lessonX}], so we need the part within the []
+        lessonData = lessonData.split('[')[1];
+        lessonData = lessonData.split(']')[0];
+        lessonData = lessonData.split('}');
+        for (var t = 0; t < lessonData.length - 1; t++) {
+            // Because we split on the }, we have to add it back everywhere
+            lessonData[t] = lessonData[t] + '}';
 
+            // Every item except the first starts with ',', we want to remove this ','
+            if(t>0){
+                lessonData[t] = lessonData[t].substr(1);
+            }
+
+            // Finally we convert the item to an element
+            lessonData[t] = JSON.parse(lessonData[t]);
+        }
+
+
+        // Get the progress per pupil data
         data = data[1].split("progressPerPupil")[1];   // Get to the part where student progress is saved
         var progress = extractEnclosedJson(data);
 
-        // We have now got the pupil info and the progress for each pupil, we first make an array with the correct data
+        // We now have all the data, we will add them to get the pupil info and their score together
         pupils = JSON.parse(pupils);
         progress = JSON.parse(progress);
 
