@@ -1,4 +1,7 @@
 function onWindowLoad() {
+    document.getElementById('print').addEventListener('click', function () {
+        printClicked();
+    });
 
     // We set a var to access the inner content of the message div on the main extension page
     var message = document.querySelector('#message');
@@ -13,6 +16,10 @@ function onWindowLoad() {
             message.innerText = 'There was an error injecting script : \n' + chrome.runtime.lastError.message;
         }
     });
+}
+
+function printClicked() {
+    alert('joeri is homo');
 }
 
 // Event listener, when we send a message we want this function to receive it and handle it
