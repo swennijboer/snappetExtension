@@ -52,28 +52,12 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
 
 
         // Search for progressPerPupil, here { } is used within so keep a counter of number of opened and closed ones
-        var i = 0;
-        data = data[1].split("progressPerPupil");   // Get to the part where student progress is saved
-        segment = data[1].split("");                // Character array again
 
-        // We want to find the first opening bracket
-        while (segment[i] != "{") {
-            i++;
-        }
-        i++;                                        // We manually add the first { by increasing i and setting open to 1
+        var lessonData = data[2];                       // We save the part in which the lesson data is saved, we will need this later
+        lessonData = lessonData.split("lessons")[1];
 
-        var open = 1;
-        var progress = "{";
-
-        for(; i < segment.length && open > 0; i++) {
-            if (segment[i] == '{') {open++;}
-
-            progress += segment[i];
-
-            if (segment[i] == "}") {open--;}
-        }
-
-
+        data = data[1].split("progressPerPupil")[1];   // Get to the part where student progress is saved
+        var progress = extractEnclosedJson(data);
 
         // We have now got the pupil info and the progress for each pupil, we first make an array with the correct data
         pupils = JSON.parse(pupils);
@@ -134,13 +118,40 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
                     }
                 }
             });
-        //chrome.tabs.create({});
-        //doc.output('dataurlnewwindow');
         doc.save('data.pdf');
 
         // Can be removed later, we will generate a PDF and open it in a new tab. For now easy for debugging
         message.innerText = "Done";
     }
 });
+
+/**
+ * Finds the JSON within a piece of text, the JSON can contain multiple { {}, {}, {}}
+ * @param data
+ * @returns {string}
+ */
+extractEnclosedJson = function(data){
+    // We want to find the first opening bracket
+    var arrayToFindJSONIn = data.split("");                 // Character array again
+    var positionInText = 0;
+    while (arrayToFindJSONIn[positionInText] != "{") {
+        positionInText++;
+    }
+    positionInText++;                                       // We manually add the first { by increasing i and setting open to 1
+
+    var countOfOpenBrackets = 1;                            // We manually added the first { so we set the counter to 1
+    var resultingJSONString = "{";                                // Here we manually add the first {
+
+    // From here we continue to look in the text, while we have not yet closed all brackes we add the text (and keep track of the amount of open/closed {})
+    for(; positionInText < arrayToFindJSONIn.length && countOfOpenBrackets > 0; positionInText++) {
+        if (arrayToFindJSONIn[positionInText] == '{') {countOfOpenBrackets++;}
+
+        resultingJSONString += arrayToFindJSONIn[positionInText];
+
+        if (arrayToFindJSONIn[positionInText] == "}") {countOfOpenBrackets--;}
+    }
+
+    return resultingJSONString;
+}
 
 window.onload = onWindowLoad;
