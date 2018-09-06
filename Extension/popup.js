@@ -97,6 +97,7 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
         var columns = ["Naam", "Score (%)", "Aantal opgaven"];
         var doc = new jsPDF('p', 'pt');
         var splitTitle = doc.splitTextToSize(title, 530);
+        splitTitle.unshift('swens master title');
         starty = 65 + splitTitle.length * 13;
         doc.autoTable(columns, docdata,
             {
