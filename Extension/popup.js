@@ -19,7 +19,51 @@ function onWindowLoad() {
 }
 
 function printClicked() {
-    alert('joeri is homo');
+    // Start generating the PDF
+    var columns = ["Naam", "Score (%)", "Aantal opgaven"];
+    var doc = new jsPDF('p', 'pt');
+    var splitTitle = doc.splitTextToSize(title, 530);
+    splitTitle.unshift('swens master title');
+    starty = 65 + splitTitle.length * 13;
+    doc.autoTable(columns, docdata,
+        {
+            startY: starty,
+            addPageContent: function (data) {
+                doc.text(splitTitle, 40,60);
+            },
+            createdCell: function (cell, opts) {
+                var ability = docdata[opts.row.index][1];
+
+                if(ability >= 0 && ability < 21 && opts.column.index == 1) {
+                    //cell.styles.fillColor = "#c71717";
+                    cell.styles.fillColor = [199, 23, 23];
+                }
+
+                if(ability >= 20 && ability < 41 && opts.column.index == 1) {
+                    // cell.styles.fillColor = "#e95f15";
+                    cell.styles.fillColor = [233, 95, 21];
+                }
+
+                if(ability >= 40 && ability < 61 && opts.column.index == 1) {
+                    // cell.styles.fillColor = "#f6cf19";
+                    cell.styles.fillColor = [246, 207, 25];
+                }
+
+                if(ability >= 60 && ability < 81 && opts.column.index == 1) {
+                    // cell.styles.fillColor = "#9dcd1c";
+                    cell.styles.fillColor = [157, 205, 28];
+                }
+
+                if(ability >= 80 && ability < 101 && opts.column.index == 1) {
+                    // cell.styles.fillColor = "#6d8e13";
+                    cell.styles.fillColor = [109, 142, 19];
+                }
+            }
+        });
+    doc.save('data.pdf');
+
+    // Can be removed later, we will generate a PDF and open it in a new tab. For now easy for debugging
+    message.innerText = "Done";
 }
 
 // Event listener, when we send a message we want this function to receive it and handle it
@@ -32,7 +76,7 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
 
         // First we get the name of the page
         var sourceCopy = source;
-        var title = sourceCopy.split("<div class=\"heading\"")[1];
+        title = sourceCopy.split("<div class=\"heading\"")[1];
         title = title.split("title=\"")[1];
         title = title.split("\"")[0];
 
@@ -45,7 +89,7 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
         // Get the pupil data
         var save = false;                       // If true we save the part that we see to a variable, otherwise we don't
         var doorgaan = true;                    // We stop the loop when this turns to false -> so when we have reached the end of the student name part
-        var pupils = "";                        // We save the pupil data to this variable (will later be converted to the respective JSON object)
+        pupils = "";                            // We save the pupil data to this variable (will later be converted to the respective JSON object)
 
         for(var i = 0; i < segment.length && doorgaan; i++) {
             if (segment[i] == '{') {save = true;}
@@ -57,7 +101,7 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
 
 
         // Get the lesson data
-        var lessonData = data[2];                       // We save the part in which the lesson data is saved, we will need this later
+        lessonData = data[2];                       // We save the part in which the lesson data is saved, we will need this later
         lessonData = lessonData.split("lessons")[1];
         // The lessons are saved as [{lesson1}, {lesson2}, {lessonX}], so we need the part within the []
         lessonData = lessonData.split('[')[1];
@@ -74,19 +118,24 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
 
             // Finally we convert the item to an element
             lessonData[t] = JSON.parse(lessonData[t]);
+
+            var fullSectionName = lessonData[t]['fullSectionName']. split(',');
+            var lessonName = lessonData[t]['lesson'];
+            lessonData[t] = fullSectionName[0] + "," + fullSectionName[1] + ", " + lessonName;
         }
+        lessonData.pop();
 
 
         // Get the progress per pupil data
         data = data[1].split("progressPerPupil")[1];   // Get to the part where student progress is saved
-        var progress = extractEnclosedJson(data);
+        progress = extractEnclosedJson(data);
 
         // We now have all the data, we will add them to get the pupil info and their score together
         pupils = JSON.parse(pupils);
         progress = JSON.parse(progress);
 
         var keys = Object.keys(pupils);                             // All keys of the students, so we can access them like an array
-        var docdata = [];                                           // Preparing array for document data
+        docdata = [];                                           // Preparing array for document data
         for(var c = 0; c < keys.length; c++) {
             var pupil = pupils[keys[c]];                            // Select the current student
             var score = progress[keys[c]];                          // Select the score info for the current student
@@ -99,52 +148,6 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
         }
 
         docdata.sort();                                             // Make sure that the array is sorted by name
-
-        // Start generating the PDF
-        var columns = ["Naam", "Score (%)", "Aantal opgaven"];
-        var doc = new jsPDF('p', 'pt');
-        var splitTitle = doc.splitTextToSize(title, 530);
-        splitTitle.unshift('swens master title');
-        starty = 65 + splitTitle.length * 13;
-        doc.autoTable(columns, docdata,
-            {
-                startY: starty,
-                addPageContent: function (data) {
-                    doc.text(splitTitle, 40,60);
-                },
-                createdCell: function (cell, opts) {
-                    var ability = docdata[opts.row.index][1];
-
-                    if(ability >= 0 && ability < 21 && opts.column.index == 1) {
-                        //cell.styles.fillColor = "#c71717";
-                        cell.styles.fillColor = [199, 23, 23];
-                    }
-
-                    if(ability >= 20 && ability < 41 && opts.column.index == 1) {
-                        // cell.styles.fillColor = "#e95f15";
-                        cell.styles.fillColor = [233, 95, 21];
-                    }
-
-                    if(ability >= 40 && ability < 61 && opts.column.index == 1) {
-                        // cell.styles.fillColor = "#f6cf19";
-                        cell.styles.fillColor = [246, 207, 25];
-                    }
-
-                    if(ability >= 60 && ability < 81 && opts.column.index == 1) {
-                        // cell.styles.fillColor = "#9dcd1c";
-                        cell.styles.fillColor = [157, 205, 28];
-                    }
-
-                    if(ability >= 80 && ability < 101 && opts.column.index == 1) {
-                        // cell.styles.fillColor = "#6d8e13";
-                        cell.styles.fillColor = [109, 142, 19];
-                    }
-                }
-            });
-        doc.save('data.pdf');
-
-        // Can be removed later, we will generate a PDF and open it in a new tab. For now easy for debugging
-        message.innerText = "Done";
     }
 });
 
