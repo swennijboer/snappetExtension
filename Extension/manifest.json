@@ -1,7 +1,7 @@
 {
   "name": "SnappetReader",
   "description" : "Reads snappet student information and generates a report from that",
-  "version": "1.3",
+  "version": "1.4",
   "browser_action": {
     "default_popup": "hello.html",
     "default_icon": "hello_extensions.png"
