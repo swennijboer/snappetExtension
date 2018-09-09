@@ -19,51 +19,77 @@ function onWindowLoad() {
 }
 
 function printClicked() {
-    // Start generating the PDF
-    var columns = ["Naam", "Score (%)", "Aantal opgaven"];
-    var doc = new jsPDF('p', 'pt');
-    var splitTitle = doc.splitTextToSize(title, 530);
-    splitTitle.unshift('swens master title');
-    starty = 65 + splitTitle.length * 13;
-    doc.autoTable(columns, docdata,
-        {
-            startY: starty,
-            addPageContent: function (data) {
-                doc.text(splitTitle, 40,60);
-            },
-            createdCell: function (cell, opts) {
-                var ability = docdata[opts.row.index][1];
+    var radios = document.getElementsByName('lesson');
 
-                if(ability >= 0 && ability < 21 && opts.column.index == 1) {
-                    //cell.styles.fillColor = "#c71717";
-                    cell.styles.fillColor = [199, 23, 23];
+    var itemSelected = false;
+    for (var i = 0; i < radios.length; i++) {
+        if (radios[i].checked) {
+            var les = radios[i].value;
+            itemSelected = true;
+        }
+    }
+
+    if (!itemSelected) {
+        alert('Kies een item uit de lijst met lessen');
+    }
+
+    else {
+        // Start generating the PDF
+        var columns = ["Naam", "Score (%)", "Aantal opgaven"];
+        var doc = new jsPDF('p', 'pt');
+        var splitTitle = doc.splitTextToSize(title, 530);
+
+        // If any other option than 'geen les toevoegen' is selected, we add the lesson to the header of the PDF
+        if (les != 'Geen les toevoegen') {
+            splitTitle.unshift(les);
+        }
+
+        var date = new Date();
+        var printedOn = "Geprint op " + date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + ' om ' + date.getHours() + ':' + date.getMinutes();
+
+        starty = 65 + splitTitle.length * 13;
+        doc.autoTable(columns, docdata,
+            {
+                startY: starty,
+                addPageContent: function (data) {
+                    doc.text(splitTitle, 40, 60);
+
+                    doc.text(printedOn, 50, 820);
+                },
+                createdCell: function (cell, opts) {
+                    var ability = docdata[opts.row.index][1];
+
+                    if (ability >= 0 && ability < 21 && opts.column.index == 1) {
+                        //cell.styles.fillColor = "#c71717";
+                        cell.styles.fillColor = [199, 23, 23];
+                    }
+
+                    if (ability >= 20 && ability < 41 && opts.column.index == 1) {
+                        // cell.styles.fillColor = "#e95f15";
+                        cell.styles.fillColor = [233, 95, 21];
+                    }
+
+                    if (ability >= 40 && ability < 61 && opts.column.index == 1) {
+                        // cell.styles.fillColor = "#f6cf19";
+                        cell.styles.fillColor = [246, 207, 25];
+                    }
+
+                    if (ability >= 60 && ability < 81 && opts.column.index == 1) {
+                        // cell.styles.fillColor = "#9dcd1c";
+                        cell.styles.fillColor = [157, 205, 28];
+                    }
+
+                    if (ability >= 80 && ability < 101 && opts.column.index == 1) {
+                        // cell.styles.fillColor = "#6d8e13";
+                        cell.styles.fillColor = [109, 142, 19];
+                    }
                 }
+            });
+        doc.save('data.pdf');
 
-                if(ability >= 20 && ability < 41 && opts.column.index == 1) {
-                    // cell.styles.fillColor = "#e95f15";
-                    cell.styles.fillColor = [233, 95, 21];
-                }
-
-                if(ability >= 40 && ability < 61 && opts.column.index == 1) {
-                    // cell.styles.fillColor = "#f6cf19";
-                    cell.styles.fillColor = [246, 207, 25];
-                }
-
-                if(ability >= 60 && ability < 81 && opts.column.index == 1) {
-                    // cell.styles.fillColor = "#9dcd1c";
-                    cell.styles.fillColor = [157, 205, 28];
-                }
-
-                if(ability >= 80 && ability < 101 && opts.column.index == 1) {
-                    // cell.styles.fillColor = "#6d8e13";
-                    cell.styles.fillColor = [109, 142, 19];
-                }
-            }
-        });
-    doc.save('data.pdf');
-
-    // Can be removed later, we will generate a PDF and open it in a new tab. For now easy for debugging
-    message.innerText = "Done";
+        // Can be removed later, we will generate a PDF and open it in a new tab. For now easy for debugging
+        message.innerText = "Done";
+    }
 }
 
 // Event listener, when we send a message we want this function to receive it and handle it
@@ -124,6 +150,8 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
             lessonData[t] = fullSectionName[0] + "," + fullSectionName[1] + ", " + lessonName;
         }
         lessonData.pop();
+        lessonData.push('Geen les toevoegen');
+        lessonData.sort();
 
 
         // Get the progress per pupil data
@@ -135,7 +163,7 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
         progress = JSON.parse(progress);
 
         var keys = Object.keys(pupils);                             // All keys of the students, so we can access them like an array
-        docdata = [];                                           // Preparing array for document data
+        docdata = [];                                               // Preparing array for document data
         for(var c = 0; c < keys.length; c++) {
             var pupil = pupils[keys[c]];                            // Select the current student
             var score = progress[keys[c]];                          // Select the score info for the current student
@@ -148,6 +176,19 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
         }
 
         docdata.sort();                                             // Make sure that the array is sorted by name
+
+
+        // We will now make the form where the user can select the lesson
+        var textHeader = '<form action="">';
+
+        var textBody = '';
+        for(var t = 0; t < lessonData.length; t++) {
+            textBody = textBody + '<input type="radio" name="lesson" value="' + lessonData[t] + '"> ' + lessonData[t] + '<br>';
+        }
+
+        var textFooter = '</form>';
+
+        message.innerHTML = textHeader + textBody + textFooter;
     }
 });
 
